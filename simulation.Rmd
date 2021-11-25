@@ -165,5 +165,14 @@ sim_reults2 %>%
 ```
 
 
+# summrization 
+```{r}
+sim_reults2 %>%
+  group_by(sample_size) %>%
+  summarise(
+    mean = mean(mu_hat),
+    sd = sd(sigma_hat)
+  )
+```
 
 
