@@ -1,0 +1,14 @@
+---
+title: "simulation"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+```
+
+**Understand the properties of your analysis in repeated sampling.**
+
+**Does statistic do what it's supposed to do?**
+
+
