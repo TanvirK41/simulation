@@ -143,12 +143,27 @@ for (i in 1:4) {
 
 
 ```{r}
-tibble(
-  sample_size = c(30, 60, 120, 240)
-) %>% 
+sim_reults2 <-
+  tibble(
+  sample_size = c(30, 60, 120, 240)) %>% 
   mutate(
-    output_lists = map(.x = sample_size, ~ rerun(100, sim_mean_sd(.x)))
-  )
+    output_lists = map(.x = sample_size, ~ rerun(1000, sim_mean_sd(.x))),
+    estimate_df = map(.x = output_lists, ~ bind_rows(.x))) %>%
+  select(-output_lists) %>%
+  unnest(estimate_df)
 ```
+
+
+
+# distribution plot 
+```{r}
+sim_reults2 %>%
+  mutate(sample_size = str_c("n = ", sample_size),
+         sample_size = fct_inorder(sample_size)) %>% 
+  ggplot(aes(x = sample_size, y = mu_hat)) +
+  geom_boxplot()
+```
+
+
 
 
