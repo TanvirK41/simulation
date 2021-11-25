@@ -5,7 +5,26 @@ output: github_document
 
 ```{r setup, include=FALSE}
 library(tidyverse)
+library(purrr)
+
+## Set Global Options 
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6, 
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
 ```
+
 
 **Understand the properties of your analysis in repeated sampling.**
 
@@ -55,4 +74,81 @@ for (i in 1:100) {
 
 bind_rows(output)
 ```
+
+
+Let's us a loop function
+
+```{r}
+
+#using rerun() function
+
+sim_results =
+  rerun(100, sim_mean_sd(samp_size = 30)) %>%
+  bind_rows()
+
+#generating a list, similar to output 
+```
+
+
+Let's look at results
+
+# distribution of the sample mean across 100 replications of this simulation 
+```{r}
+
+# population SD is sigma_hat divided sqrt of sample size 
+
+sim_results %>%
+  ggplot(aes(x = sigma_hat)) + geom_density()
+
+sim_results %>%
+  summarise(
+    avg_sample_mean = mean(mu_hat),
+    sd_sample_mean = sd(mu_hat)
+  )
+```
+
+
+
+## Let's try other sample sizes
+
+```{r}
+n_list = 
+  list(
+    "n = 30" = 30,
+    "n = 60" = 60,
+    "n = 120" = 120,
+    "n = 240" = 240
+  )
+
+output = 
+  vector("list", length = 4)
+
+
+output[[1]] = rerun(100, sim_mean_sd(samp_size = n_list[[1]])) %>% bind_rows()
+output[[2]] = rerun(100, sim_mean_sd(samp_size = n_list[[2]])) %>% bind_rows()
+```
+
+
+
+```{r}
+for (i in 1:4) {
+  
+  output[[i]] =
+    rerun(100, sim_mean_sd(samp_size = n_list[[i]])) %>% 
+    bind_rows()
+  
+}
+```
+
+
+
+```{r}
+tibble(
+  sample_size = c(30, 60, 120, 240)
+) %>% 
+  mutate(
+    output_lists = map(.x = sample_size, ~ rerun(100, sim_mean_sd(.x)))
+  )
+```
+
 
