@@ -12,3 +12,47 @@ library(tidyverse)
 **Does statistic do what it's supposed to do?**
 
 
+# Let's simulate:
+
+I have a function 
+
+```{r}
+sim_mean_sd = function(samp_size, mu = 2, sigma = 3) {
+  
+  sim_data = tibble(
+    x = rnorm(samp_size, mean = mu, sd = sigma),
+  )
+  
+  #returns 
+  sim_data %>% 
+    summarize(
+      mu_hat = mean(x),
+      sigma_hat = sd(x)
+    )
+}
+```
+
+I can "simulate" by running this line 
+
+```{r}
+sim_mean_sd(30)
+```
+
+
+# Let's simulate a lot
+
+Let's start with a for loop.
+
+```{r}
+
+#100 times -> I have gone out in to the universe and asked the universe to give me a sample size 30, with a true mean 3 and true standard deviation 40, from a normal distribution 
+
+output = vector("list", length = 100)
+
+for (i in 1:100) {
+  output[[i]] = sim_mean_sd(samp_size = 30)
+}
+
+bind_rows(output)
+```
+
